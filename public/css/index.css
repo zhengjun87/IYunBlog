@@ -1,0 +1,29 @@
+.main{
+	margin-top: 20px;
+}
+.content .header .nav li>a{
+	padding:6px 15px;
+}
+.content .header .nav{
+	background: #f6f6f6;
+	padding:6px;
+}
+.content .article-list ul li{
+	border-bottom:1px solid #f0f0f0;
+	background-color:#fff;
+	padding-right: 15px;
+}
+.content .article-list ul li .article-name,
+.content .article-list ul li .uptime{
+	height: 46px;
+	line-height: 46px;
+}
+.content .article-list ul li>a .type{
+	background: #80bd01;
+    padding: 2px 4px;
+    border-radius: 3px;
+    margin-right: 10px;
+    color: #fff;
+    font-size: 12px;
+}
+

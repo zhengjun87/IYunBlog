@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>my register</title>
+	<link rel='stylesheet' href='/css/bootstrap.css' /> 
+    <link rel='stylesheet' href='/css/style.css' />
+    <link rel='stylesheet' href='/css/index.css' />
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.js"></script>
+</head>
+<style>
+    .regis-box{
+        background: #ccc;
+        padding:15px;
+        margin-top: 10%;
+    }
+</style>
+<body>
+    <%- include header.html %>
+    <div class="container">
+        <div class="col-xs-4"></div>
+        <div class="col-xs-4 regis-box">
+            <div class="form-group">
+                <label for="exampleInputEmail1">用户名</label>
+                <input type="email" class="form-control" id="name" placeholder="用户名">
+            </div>
+            <div class="form-group">
+                <label for="exampleInputPassword1">密码</label>
+                <input type="password" class="form-control" id="password" placeholder="密码">
+            </div>
+
+        <input type="button" class="btn btn-default" id="submitRegister" value="注册">
+        </div>
+        
+        <div class="col-xs-3"></div>
+    </div>
+	
+		
+	
+</body>
+<script>
+	$("#submitRegister").click(function(){
+        $.ajax({
+            url:"regis",
+            type:"post",
+            dataType:"json",
+            data:{username:$("#name").val(),password:$("#password").val()},
+            success:function(data){
+                switch(data.code){
+                    case '00':
+                        alert("注册成功");
+                        break;
+                    case '01':
+                        alert("注册失败")
+                        break;
+                    case '02':
+                        alert("用户名已被使用")
+                        break;
+                }
+            }
+        });
+    });
+</script>
+</html>

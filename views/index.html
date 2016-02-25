@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+  <head>
+    <title>艾云博客</title>
+    <link rel='stylesheet' href='/css/bootstrap.css' /> 
+    <link rel='stylesheet' href='/css/style.css' />
+    <link rel='stylesheet' href='/css/index.css' />
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.js"></script>
+    <script src="http://apps.bdimg.com/libs/angular.js/1.3.7/angular.min.js"></script>
+    <script src="http://apps.bdimg.com/libs/moment/2.8.3/moment.min.js"></script>
+  </head>
+  <body ng-controller="customersCtrl" class="in-style">
+    	<%- include header.html %>
+    	<div class="container main">
+    		<div class="row">
+    			<div class="col-xs-9 content">
+    				<div class="header">
+    					<ul class="nav nav-pills">
+							<li ng-class="{active:type=='all'}"><a href="/blog?type=all&amp;page=1">全部</a></li>
+							<li ng-class="{active:type=='reprint'}"><a href="/blog?type=reprint&amp;page=1">原创</a></li>
+							<li ng-class="{active:type=='origin'}"><a href="/blog?type=origin&amp;page=1">转载</a></li>
+						  </ul>
+    				</div>
+    				<div class="article-list">
+    					<ul >
+    						<li ng-repeat="list in lists" class="clearfix"><a ng-href="/blog/{{list._id}}">
+    							<div class="col-xs-10 article-name"><span class="type" ng-bind="list.type"></span><span ng-bind="list.title"></span></div>
+    							<div class="pull-right uptime" ng-bind="list.created_time"></div>
+    						</a></li>
+    					</ul>
+    				</div>
+            <div class="page-box text-center">
+              <nav>
+                <ul class="pagination">
+                  <li ng-class="{disabled:currentPage==1}">
+                    <a href="javascript:void(0)" ng-click="prePage()">
+                      <span>&laquo;</span>
+                    </a>
+                  </li>
+                  <li ng-repeat="n in pageItem" ng-class="{active: $index+1==currentPage}" ><a ng-href="/blog?type={{type}}&page={{$index+1}}" ng-bind="$index+1"></a></li>
+                  <li ng-class="{disabled:currentPage==pageItem.length}">
+                    <a href="javascript:void(0)" ng-click="nextPage()">
+                      <span>&raquo;</span>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+    			</div>
+    			<div class="col-xs-3 side">
+    				<ul>
+    					<li><a href="">
+    						<h2 class="text-center">欢迎</h2>
+    					</a></li>
+    					<li><a href="">
+    						<h2 class="text-center">光临</h2>
+    					</a></li>
+    				</ul>
+    			</div>
+    		</div>
+    	</div>
+      
+  </body>
+   
+<script>
+  var app = angular.module('myApp', []),pageHtml='';
+  var datas = <%- JSON.stringify(articles) %>;
+  for(var i=0;i<datas.length;i++){
+    datas[i].created_time=moment(datas[i].created_time).format("YYYY-MM-DD HH:mm");
+  }
+  app.controller('customersCtrl',['$scope','$sce',function($scope,$sce) {
+    $scope.lists=datas;
+    $scope.currentPage=<%= currentPage %>;
+    $scope.type = '<%= type %>';
+    $scope.pageItem=(function(){
+      var pageArr=[];
+      for(var i=0;i<=Math.floor(<%= allPageNum %>/10);i++){
+        pageArr.push(i+1);
+      }
+      (<%= allPageNum %>%10==0)?pageArr.pop():'';
+        
+      
+      console.log(pageArr);
+      return pageArr;
+    })();
+    $scope.prePage=function(){
+      if($scope.currentPage>1){
+        window.location.href='/blog?type='+$scope.type+'&page='+($scope.currentPage-1)+'';
+      }  
+    }
+    $scope.nextPage=function(){
+      if($scope.currentPage<=$scope.pageItem.length-1){
+        window.location.href='/blog?type='+$scope.type+'&page='+($scope.currentPage+1)+'';
+      }  
+    }
+  }]);
+
+  
+</script>
+</html>

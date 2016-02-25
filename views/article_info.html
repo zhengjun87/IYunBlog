@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en" ng-app="myApp">
+<head>
+	<meta charset="UTF-8">
+	<title><%= title %></title>
+	<link rel='stylesheet' href='/css/bootstrap.css' /> 
+  <link rel='stylesheet' href='/css/style.css' />
+  <link rel='stylesheet' href='/css/index.css' />
+  <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.js"></script>
+  <script src="http://apps.bdimg.com/libs/angular.js/1.5.0-beta.0/angular.min.js"></script>
+  <script src="http://apps.bdimg.com/libs/moment/2.8.3/moment.min.js"></script>
+</head>
+<body ng-controller="articleCtrl" class="ar-info">
+  <%- include header.html %>
+	<div class="container box">
+    <div class="row">
+      <div class="col-xs-9 content">
+        <h3 ng-bind="data.title"></h3>
+        <p class="ar-time">•&nbsp;&nbsp;发布于<span ng-bind="data.created_time"></span></p>
+        <div ng-bind-html="html"></div>
+      </div>
+      <div class="col-xs-3 side">
+        <ul>
+          <li><a href="">
+            <div class="header">
+              作者
+            </div>
+            <div class="inner">
+              <p ng-bind="user.username"></p>
+            </div>
+
+          </a></li>
+          <li><a href="">
+            
+          </a></li>
+        </ul>
+      </div>
+    </div>
+     
+  </div>
+
+</body>
+<script>
+  var article = <%- JSON.stringify(articleInfo) %>;
+  var user = <%- JSON.stringify(user) %>;
+  console.log(user);
+  article.created_time=moment(article.created_time).format("YYYY-MM-DD HH:mm");
+  var app=angular.module('myApp',[]);
+  app.controller('articleCtrl',['$scope','$sce',function($scope,$sce){
+    var html = $sce.trustAsHtml(article.html);
+    $scope.data=article;
+    $scope.html=html;
+    $scope.user=user;
+  }])
+	
+</script>
+</html>

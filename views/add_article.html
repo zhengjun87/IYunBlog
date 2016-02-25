@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>添加博客</title>
+	<link rel='stylesheet' href='/css/bootstrap.css' /> 
+  <link rel='stylesheet' href='/css/style.css' />
+  <link rel="stylesheet" href="/css/umeditor.css">
+  <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.js"></script>
+  <script src="/js/umeditor.config.js"></script>
+  <script src="/js/umeditor.min.js"></script>
+</head>
+
+<body class="addar">
+	<%- include header.html %>
+	<div class="container">
+			<div class="form-group">
+				<label>标题</label>
+				<input type="email" id="title" class="form-control" placeholder="标题">
+			</div>
+			<script type="text/plain" id="myEditor" style="width:1000px;height:240px;">
+		   
+			</script>
+			<div class="type-box">
+				<select id="type">
+				  <option>原创</option>
+				  <option>转载</option>
+				</select>
+			</div>
+			
+			<button type="button" class="btn btn-default" id="sub">提交</button>
+	
+	</div>
+</body>
+<script>
+var um = UM.getEditor('myEditor',{
+	indentValue : '0em'
+	
+});
+
+$("#sub").click(function(){
+	var html =um.getContent(); 
+	var txt = um.getContentTxt();
+	jQuery.ajax({
+	  url: 'addarticle',
+	  type: 'POST',
+	  dataType: 'json',
+	  data: {title: $("#title").val(),content:txt,html:html,type:$("#type").val()},
+	  success: function(data) {
+	  	console.log(data);
+	    switch(data.code){
+	    	case '00':
+	    		alert("成功");
+	    		break;
+	    	case '01':
+	    		alert("失败");
+	    		break;
+	    }
+	  }
+	});
+})
+	
+	
+</script>
+</html>
