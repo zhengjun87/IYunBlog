@@ -8,7 +8,11 @@ var userSchema=new Schema({
     type:{type:Number},
     lv:{type:String}
 });
-var userModel=db.model('users', userSchema);
+var commentSchema=new Schema({
+    user:{type:Schema.Types.ObjectId,ref:'users'},
+    content:{type:String},
+    created_time:{type: Date}
+})
 var articleSchema=new Schema({
 	title: {type:String},
     content: {type:String},
@@ -16,9 +20,13 @@ var articleSchema=new Schema({
     type:{type:String},
     created_time:{type: Date},
     user:{
-    	type:Schema.Types.ObjectId
-    }
+    	type: Schema.Types.ObjectId,
+        ref:'users'
+    },
+    comment:[commentSchema]
 });
+
+var userModel=db.model('users', userSchema);
 var articleModel=db.model('articles', articleSchema);
 exports.user = userModel;
 exports.article = articleModel;

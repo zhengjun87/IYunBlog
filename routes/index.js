@@ -52,12 +52,11 @@ router.get('/addarticle',function(req, res, next) {
   if(req.session.username){
     res.render('add_article');
   }else{
-    res.redirect('/blog');
+    res.redirect('/user/login');
   }
 	
 });
 router.post('/addarticle', function(req, res, next) {
-  console.log(req.session.username);
   usermodel.findOne({username:req.session.username}).exec(function(err,doc){
     var option={
       title:req.body.title,
@@ -65,7 +64,7 @@ router.post('/addarticle', function(req, res, next) {
       html:req.body.html,
       type:req.body.type,
       created_time:new Date(),
-      user:doc._id
+      user:doc._id,
     }
     console.log(doc._id);
     articlemodel.create(option,function(err,doc){
@@ -79,22 +78,51 @@ router.post('/addarticle', function(req, res, next) {
   })
 	
 });
-router.get('/blog/:id',function(req,res,next){
-	var articleId=req.params.id;
+router.post('/blog/:id/comment',function(req,res,next){
+  var option={
+    articleId:req.params.id,
+    username:req.session.username,
+    content:req.body.content,
+    created_time:new Date()
+  }
+  console.log(option);
   async.waterfall([
     function(callback){
-      articlemodel.findOne({_id:articleId}).exec(function(err,articleinfo){
-        callback(null, articleinfo);
-      }) 
+      usermodel.findOne({username:option.username}).exec(function(err,user){
+        console.log(user);
+        callback(null,user);
+      })
     },
-    function(age1, callback){
-      usermodel.findOne({_id:age1.user}).exec(function(err,user){
-        callback(null,age1,user);
-      })  
+    function(user,callback){
+      articlemodel.findOne({_id:option.articleId}).exec(function(err,article){
+        callback(null,user,article);
+      })
+    },
+    function(user,article,callback){
+      console.log(user);
+      article.comment.push({
+        user:user._id,
+        content:option.content,
+        created_time:new Date()
+      })
+      article.save(function(err) {
+        callback(err,user,article);
+      })
     }
-  ], function (err, article,user) {
-      res.render('article_info',{"title":"详情","articleInfo":article,'user':user});
-  });
-	
+  ],function(err,result){
+    if(!err){
+      console.log(err);
+      res.send({code:'00'});
+    }else{
+      res.send({code:'01'});
+    }
+  })
+  
+})
+router.get('/blog/:id',function(req,res,next){
+	var articleId=req.params.id;
+  articlemodel.findOne({_id:articleId}).populate('comment.user').exec(function(err,articleinfo){
+    res.render('article_info',{"title":"详情","articleInfo":articleinfo});
+  })
 })
 module.exports = router;

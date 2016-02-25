@@ -64,6 +64,39 @@ ul,li{
     font-size: 12px;
     color: #838383;
 }
+.ar-info .comment-list-box .col-xs-9{
+	background: #fff;
+}
+.ar-info .comment-list-box{
+	margin-top: 15px;
+}
+.ar-info .comment-list ul{
+	margin-bottom: 0;
+}
+.ar-info .comment-list ul li{
+	padding:20px 15px;
+	border-bottom:#f0f0f0 1px solid;
+}
+.ar-info .comment-list ul li .header{
+	margin-bottom: 10px;
+}
+.ar-info .comment-box{
+	margin-top:15px;
+}
+.ar-info .comment-box .comment .header{
+	height: 40px;
+	line-height: 40px;
+	background: #f6f6f6;
+	padding-left: 15px;
+}
+.ar-info .comment-box .comment .inner{
+	margin-left:-1px;
+}
+.ar-info .comment-box .col-xs-9{
+	padding:0;
+}
+.ar-info
+
 .addar #title{
 	width: 1000px;
 }

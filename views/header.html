@@ -2,13 +2,16 @@
 	<div class="container header-inner">
 		<a href="/blog" class="logo"></a>
 		<ul class="pull-right nav">
+
 			<li><a href="/blog?type=all&amp;page=1">首页</a></li>
 			<li class="isuser"></li>
 			<li class="outlogin"></li>
+			<li><a href="/addarticle">发表</a></li>
 		</ul>
 	</div>
 </header>
 <script>
+	var islogin;
 	jQuery.ajax({
 	  url: '/user/isLogin',
 	  type: 'POST',
@@ -18,9 +21,11 @@
 	    if(username){
 		    $(".isuser").html('<a href="javascript:void(0)">'+username+'</a>');
 		    $(".outlogin").html('<a href="/user/outLogin">退出</a>');
+		    islogin=true;
 		}else{
 			$(".isuser").html('<a href="/user/regis">注册</a>');
-		    $(".outlogin").html('<a href="/user/login">登陆</a>')
+		    $(".outlogin").html('<a href="/user/login">登陆</a>');
+		    islogin=false;
 		}
 	  }
 	});
