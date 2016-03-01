@@ -121,7 +121,7 @@ router.post('/blog/:id/comment',function(req,res,next){
 })
 router.get('/blog/:id',function(req,res,next){
 	var articleId=req.params.id;
-  articlemodel.findOne({_id:articleId}).populate('comment.user').exec(function(err,articleinfo){
+  articlemodel.findOne({_id:articleId}).populate('user').populate('comment.user').exec(function(err,articleinfo){
     res.render('article_info',{"title":"详情","articleInfo":articleinfo});
   })
 })

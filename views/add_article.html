@@ -4,13 +4,17 @@
 	<meta charset="UTF-8">
 	<title>添加博客</title>
 	<link rel='stylesheet' href='/css/bootstrap.css' /> 
-  <link rel='stylesheet' href='/css/style.css' />
-  <link rel="stylesheet" href="/css/umeditor.css">
-  <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.js"></script>
-  <script src="/js/umeditor.config.js"></script>
-  <script src="/js/umeditor.min.js"></script>
+  	<link rel='stylesheet' href='/css/style.css' />
+  	<link rel="stylesheet" href="/ueditor/themes/default/css/ueditor.css">
+  	<script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.js"></script>
+  	<script src="/ueditor/ueditor.config.js"></script>
+  	<script src="/ueditor/ueditor.all.js"></script>
 </head>
-
+<style>
+	#title{
+		width: 1000px;
+	}
+</style>
 <body class="addar">
 	<%- include header.html %>
 	<div class="container">
@@ -31,14 +35,13 @@
 	</div>
 </body>
 <script>
-var um = UM.getEditor('myEditor',{
-	indentValue : '0em'
-	
+var ue = UE.getEditor('myEditor',{
+	indentValue : '0em'	
 });
 
 $("#sub").click(function(){
-	var html =um.getContent(); 
-	var txt = um.getContentTxt();
+	var html =ue.getContent(); 
+	var txt = ue.getContentTxt();
 	jQuery.ajax({
 	  url: 'addarticle',
 	  type: 'POST',

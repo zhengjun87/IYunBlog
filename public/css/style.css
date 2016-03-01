@@ -74,11 +74,18 @@ ul,li{
 	margin-bottom: 0;
 }
 .ar-info .comment-list ul li{
-	padding:20px 15px;
+	padding:10px;
 	border-bottom:#f0f0f0 1px solid;
 }
 .ar-info .comment-list ul li .header{
 	margin-bottom: 10px;
+}
+.ar-info .comment-list ul li .created-time{
+	color: #838383;
+	font-size:12px;
+}
+.ar-info .comment-list ul li .content{
+	font-size: 16px;
 }
 .ar-info .comment-box{
 	margin-top:15px;

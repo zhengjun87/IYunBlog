@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "async": "^1.5.2",
-    "mongoose": "^4.4.4"
+    "mongoose": "^4.4.4",
+    "ueditor": "^1.1.1"
   }
 }

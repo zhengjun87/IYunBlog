@@ -5,13 +5,12 @@
 	<title><%= title %></title>
 	<link rel='stylesheet' href='/css/bootstrap.css' /> 
   <link rel='stylesheet' href='/css/style.css' />
-  <link rel='stylesheet' href='/css/index.css' />
-  <link rel="stylesheet" href="/css/umeditor.css">
+  <link rel="stylesheet" href="/ueditor/themes/default/css/ueditor.css">
   <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.js"></script>
   <script src="http://apps.bdimg.com/libs/angular.js/1.5.0-beta.0/angular.min.js"></script>
   <script src="http://apps.bdimg.com/libs/moment/2.8.3/moment.min.js"></script>
-  <script src="/js/umeditor.config.js"></script>
-  <script src="/js/umeditor.min.js"></script>
+  <script src="/ueditor/ueditor.config.js"></script>
+  <script src="/ueditor/ueditor.all.js"></script>
 </head>
 <body ng-controller="articleCtrl" class="ar-info">
   <%- include header.html %>
@@ -24,15 +23,15 @@
       </div>
       <div class="col-xs-3 side">
         <ul>
-          <li><a href="">
+          <li>
             <div class="header">
               作者
             </div>
             <div class="inner">
-              <p ng-bind="user.username"></p>
+              <a href=""><p ng-bind="user.username"></p></a>
             </div>
 
-          </a></li>
+          </li>
           <li><a href="">
             
           </a></li>
@@ -44,7 +43,7 @@
           <div class="comment-list">
             <ul>
               <li ng-repeat="comment in comments">
-                <div class="header clearfix"><a class="user" ng-bind="comment.user.username"></a>&nbsp;•&nbsp;<span class="created-time" ng-bind="comment.created_time">2015-02-02</span><span class="pull-right"><span ng-bind="$index+1"></span>楼</span></div>
+                <div class="header clearfix"><a href="javascript:void(0)" class="user" ng-bind="comment.user.username"></a>&nbsp;•&nbsp;<span class="created-time" ng-bind="comment.created_time">2015-02-02</span><span class="pull-right"><span ng-bind="$index+1"></span>楼</span></div>
                 <div class="content" ng-bind-html="comment.content">
                   
                 </div>
@@ -69,11 +68,10 @@
 
 </body>
 <script>
-  var um = UM.getEditor('myEditor',{
+  var ue = UE.getEditor('myEditor',{
     initialFrameWidth :'879'
   });
   var article = <%- JSON.stringify(articleInfo) %>;
-  console.log(article);
   article.created_time=moment(article.created_time).format("YYYY-MM-DD HH:mm");
   var app=angular.module('myApp',[]);
   app.controller('articleCtrl',['$scope','$sce',function($scope,$sce){
@@ -82,14 +80,14 @@
     $scope.html=html;
     $scope.user=article.user;
     $scope.addComment=function(){
-      console.log(um.getContentTxt());
-      if(um.hasContents()){
+      console.log(ue.getContentTxt());
+      if(ue.hasContents()){
         if(islogin){
           jQuery.ajax({
             url: ''+location.pathname+'/comment',
             type: 'POST',
             dataType: 'json',
-            data: {content: um.getContent()},
+            data: {content: ue.getContent()},
             success: function(data) {
               switch(data.code){
                 case '00':
@@ -110,7 +108,6 @@
     };
     $scope.comments=(function(){
       var datas=article.comment;
-      console.log(datas);
       for(var i=0;i<datas.length;i++){
         datas[i].content=$sce.trustAsHtml(datas[i].content);
         datas[i].created_time=moment(datas[i].created_time).format("YYYY-MM-DD HH:mm");
