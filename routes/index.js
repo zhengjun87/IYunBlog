@@ -13,7 +13,7 @@ router.get('/blog', function(req, res, next) {
   var page=req.query.page;
   var type=req.query.type;
   if(!page||!type){
-    res.redirect('/blog?type=all&page=1');
+    return res.redirect('/blog?type=all&page=1');
   }
   var queryOption;
   switch(type){
@@ -125,4 +125,5 @@ router.get('/blog/:id',function(req,res,next){
     res.render('article_info',{"title":"详情","articleInfo":articleinfo});
   })
 })
+
 module.exports = router;

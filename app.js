@@ -9,6 +9,8 @@ var ueditor=require('ueditor');
 var config = require('./config');
 var index = require('./routes/index');
 var users = require('./routes/users');
+var m = require('./routes/m');
+
 
 var app = express();
 
@@ -17,13 +19,14 @@ app.set('views', path.join(__dirname, 'views'));
 app.engine("html",require("ejs").renderFile);
 app.set('view engine', 'html');
 
-// uncomment after placing your favicon in /public
+//uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser({limit:'50mb'}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+
 app.use("/ueditor/ue", ueditor(path.join(__dirname, 'public'), function(req, res, next) {
   // ueditor 客户发起上传图片请求
   if(req.query.action === 'uploadimage'){
@@ -52,6 +55,8 @@ app.use(session({
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/user', users);
+app.use('/m', m);
+
 
 // 404处理
 app.use(function(req, res, next) {

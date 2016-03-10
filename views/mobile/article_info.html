@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en" ng-app="myApp">
+<head>
+	<title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <link rel="stylesheet" href="/jquery-weui/dist/lib/weui.css">
+  <link rel="stylesheet" href="/jquery-weui/dist/css/jquery-weui.css">
+</head>
+<style>
+  .container{
+    padding:15px;
+  }
+  .title{
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .time{
+    color: #999;
+    font-size: 14px;
+  }
+</style>
+<body ng-controller="main">
+  <div class="container">
+    <p class="title" ng-bind="article.title"></p>
+    <p class="time" ng-bind="article.created_time"></p>
+    <div class="content" ng-bind-html="article.html"></div>
+  </div>
+	
+<script src="/jquery-weui/dist/lib/jquery-2.1.4.js"></script>
+<script src="http://apps.bdimg.com/libs/angular.js/1.3.7/angular.min.js"></script>
+<script src="/jquery-weui/dist/js/jquery-weui.js"></script>
+<script src="http://apps.bdimg.com/libs/moment/2.8.3/moment.min.js"></script>
+
+</body>
+<script>
+  var data=<%- JSON.stringify(articleInfo) %>;
+  var app = angular.module('myApp', []);
+  data.created_time=moment(data.created_time).format("YYYY-MM-DD HH:mm");
+  app.controller('main',['$scope','$sce',function($scope,$sce) {
+    data.html = $sce.trustAsHtml(data.html);
+    $scope.article=data;
+  }]);
+</script>
+</html>
