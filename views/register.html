@@ -39,26 +39,32 @@
 	
 </body>
 <script>
-	$("#submitRegister").click(function(){
+
+$("#submitRegister").click(function(){
+    if(!$("#name").val()||!$("#password").val()){
+        alert("用户名或密码不能为空");
+    }else{
         $.ajax({
-            url:"regis",
-            type:"post",
-            dataType:"json",
-            data:{username:$("#name").val(),password:$("#password").val()},
-            success:function(data){
-                switch(data.code){
-                    case '00':
-                        alert("注册成功");
-                        break;
-                    case '01':
-                        alert("注册失败")
-                        break;
-                    case '02':
-                        alert("用户名已被使用")
-                        break;
-                }
+        url:"regis",
+        type:"post",
+        dataType:"json",
+        data:{username:$("#name").val(),password:$("#password").val()},
+        success:function(data){
+            switch(data.code){
+                case '00':
+                    alert("注册成功");
+                    break;
+                case '01':
+                    alert("注册失败")
+                    break;
+                case '02':
+                    alert("用户名已被使用")
+                    break;
             }
-        });
+        }
     });
+    }
+    
+});
 </script>
 </html>
