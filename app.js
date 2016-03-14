@@ -9,7 +9,9 @@ var ueditor=require('ueditor');
 var config = require('./config');
 var index = require('./routes/index');
 var users = require('./routes/users');
+var admin = require('./routes/admin');
 var m = require('./routes/m');
+
 
 
 var app = express();
@@ -55,6 +57,7 @@ app.use(session({
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/user', users);
+app.use('/admin', admin);
 app.use('/m', m);
 
 
