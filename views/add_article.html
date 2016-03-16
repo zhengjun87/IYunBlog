@@ -46,10 +46,10 @@ $("#sub").click(function(){
 	  url: 'addarticle',
 	  type: 'POST',
 	  dataType: 'json',
-	  data: {title: $("#title").val(),content:txt,html:html,type:$("#type").val()},
-	  success: function(data) {
-	  	console.log(data);
-	    switch(data.code){
+	  data: {title: $("#title").val(),content:txt,html:html,type:$("#type").val()}
+	})
+	.then(function(data){
+		switch(data.code){
 	    	case '00':
 	    		alert("成功");
 	    		break;
@@ -57,8 +57,9 @@ $("#sub").click(function(){
 	    		alert("失败");
 	    		break;
 	    }
-	  }
-	});
+	},function(){
+    alert("出错啦！");
+  });
 })
 	
 	
