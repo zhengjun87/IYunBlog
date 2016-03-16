@@ -24,5 +24,22 @@ router.post('/rmArticle', function(req, res, next) {
     }
   })
 });
-
+router.get('/user', function(req, res, next) {
+  usermodel.find({}).exec(function(err,users){
+    if(!err){
+      res.render('admin/user',{
+        users:users
+      })
+    }
+  })
+});
+router.post('/rmUser', function(req, res, next) {
+  var userId=req.body.id;
+  console.log(userId);
+  usermodel.remove({_id:userId}).exec(function(err,user){
+    if(!err){
+      res.send({code:'00'});
+    }
+  })
+});
 module.exports = router;
