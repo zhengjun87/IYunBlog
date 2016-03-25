@@ -25,8 +25,19 @@ var articleSchema=new Schema({
     },
     comment:[commentSchema]
 });
-
+var billSchema=new Schema({
+    event_theme:{type:String},
+    touzi_money:{type:String},
+    yuji_profit:{type:String},
+    start_time:{type: String},
+    term:{type:String},
+    out_time:{type:String},
+    user_num:{type:String},
+    state:{type:Number,default:0}
+})
 var userModel=db.model('users', userSchema);
 var articleModel=db.model('articles', articleSchema);
+var billModel=db.model('bills', billSchema);
 exports.user = userModel;
 exports.article = articleModel;
+exports.bill = billModel;

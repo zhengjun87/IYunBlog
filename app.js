@@ -11,6 +11,7 @@ var index = require('./routes/index');
 var users = require('./routes/users');
 var admin = require('./routes/admin');
 var m = require('./routes/m');
+var bill = require('./routes/bill');
 
 
 
@@ -59,6 +60,7 @@ app.use('/', index);
 app.use('/user', users);
 app.use('/admin', admin);
 app.use('/m', m);
+app.use('/bill', bill);
 
 
 // 404处理
@@ -69,7 +71,7 @@ app.use(function(req, res, next) {
 });
 
 // 错误处理
-if (app.get('env') === 'development') {
+if (app.get('env') === 'development') {//开发环境
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {

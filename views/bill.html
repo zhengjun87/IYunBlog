@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+  <title>账单</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <link rel='stylesheet' href='/css/bootstrap.css' /> 
+  <link rel='stylesheet' href='/css/style.css' />
+  <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.js"></script>
+  <script src="http://apps.bdimg.com/libs/angular.js/1.3.7/angular.min.js"></script>
+  <script src="http://apps.bdimg.com/libs/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+  <script src="http://apps.bdimg.com/libs/moment/2.8.3/moment.min.js"></script>
+</head>
+<style>
+  .modal-content{
+    padding:20px;
+  }
+  th,td{
+    vertical-align: middle !important;
+  }
+</style>
+<body ng-controller="myCtrl" class="in-style">
+ <%- include header.html %>
+ <p></p>
+ <div class="container-fluid">
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-lg">添加</button>
+  <table class="table table-striped">
+   <tr>
+    <th>活动主题</th>
+    <th>投资金额</th>
+    <th>预计收益</th>
+    <th>开始时间</th>
+    <th>期限</th>
+    <th>结束时间</th>
+    <th>做了几个号</th>
+    <th>操作</th>
+  </tr>
+  <tr ng-repeat="bill in bills">
+    <td ng-bind="bill.event_theme"></td>
+    <td ng-bind="bill.touzi_money"></td>
+    <td ng-bind="bill.yuji_profit"></td>
+    <td ng-bind="bill.start_time"></td>
+    <td ng-bind="bill.term"></td>
+    <td ng-bind="bill.out_time"></td>
+    <td ng-bind="bill.user_num"></td>
+    <td><button ng-bind="bill.state" ng-click="modifyState()" class="btn btn-default" ng-class="{'btn-warning':bill.state=='未提现'}"></button>&nbsp;<button ng-click="rmBill()" class="btn btn-warning">删除</button></td>
+  </tr>
+</table>
+</div>
+
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="		myLargeModalLabel">
+ <div class="modal-dialog modal-lg">
+   <div class="modal-content">
+      <div class="form-group clearfix">
+        <div class="col-xs-2"><label>活动主题</label></div>
+        <div class="col-xs-10"><input type="email" class="form-control" id="event_theme"></div>
+      </div>
+      <div class="form-group clearfix">
+        <div class="col-xs-2"><label class="pull-left">投资金额</label></div>
+        <div class="col-xs-10"><input type="email" class="form-control" id="touzi_money"></div>
+      </div>
+      <div class="form-group clearfix">
+        <div class="col-xs-2"><label class="pull-left">预计收益</label></div>
+        <div class="col-xs-10"><input type="email" class="form-control" id="yuji_profit"></div>
+      </div>
+      <div class="form-group clearfix">
+        <div class="col-xs-2"><label class="pull-left">开始时间</label></div>
+        <div class="col-xs-10"><input type="email" class="form-control" id="start_time"></div>
+      </div>
+      <div class="form-group clearfix">
+        <div class="col-xs-2"><label class="pull-left">期限</label></div>
+        <div class="col-xs-10"><input type="email" class="form-control" id="term"></div>
+      </div>
+      <div class="form-group clearfix">
+        <div class="col-xs-2"><label class="pull-left">结束时间</label></div>
+        <div class="col-xs-10"><input type="email" class="form-control" id="out_time"></div>
+      </div>
+      <div class="form-group clearfix">
+        <div class="col-xs-2"><label class="pull-left">做了几个号</label></div>
+        <div class="col-xs-10"><input type="email" class="form-control pull-left" id="user_num"></div>
+      </div>
+      <div class="form-group clearfix">
+        <div class="col-xs-2"></div>
+        <div class="col-xs-10"><input type="button" value="确定" class="btn btn-info" ng-click="addBill()"></div>
+      </div>
+      
+   </div>
+ </div>
+</div>
+</body>
+<script>
+  var app=angular.module('myApp',[]);
+  var datas=<%- JSON.stringify(bills) %>;
+  console.log(datas);
+  for(let i=0;i<datas.length;i++){
+      if(datas[i].state==0){
+        datas[i].state='未提现';
+      }else{
+        datas[i].state='已提现';
+      }
+    }
+  app.controller('myCtrl',function($scope,$http){
+    $scope.bills=datas;
+    $scope.modifyState=function(){
+      if($(this)[0].bill.state=='未提现'){
+        $http.post('/bill/modifyState',{_id:$(this)[0].bill._id})
+        .success(function(data){
+          if(data.code=='00'){
+            alert('状态已更改为已提现');
+            window.location.reload();
+          }else{
+            alert('出错了');
+          }
+        })
+      }else{}
+    }
+    $scope.addBill=function(){
+      $http.post('/bill/addBill',{event_theme:$('#event_theme').val()
+        ,touzi_money:$('#touzi_money').val()
+        ,yuji_profit:$('#yuji_profit').val()
+        ,start_time:$('#start_time').val()
+        ,term:$('#term').val()
+        ,out_time:$('#out_time').val()
+        ,user_num:$('#user_num').val()
+      }).success(function(data){
+        console.log(data);
+        if(data.code=='00'){
+          alert('添加成功');
+          window.location.reload();
+        }else{
+          alert('添加失败');
+        }
+      })
+    }
+    $scope.rmBill=function(){
+      $http.post('/bill/rmBill',{_id:$(this)[0].bill._id})
+      .success(function(data){
+        if(data.code=='00'){
+          alert('已删除');
+          window.location.reload();
+        }else{
+          alert('出错了');
+        }
+      })
+    }
+  })
+</script>
+</html>
