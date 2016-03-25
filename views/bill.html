@@ -91,7 +91,6 @@
 <script>
   var app=angular.module('myApp',[]);
   var datas=<%- JSON.stringify(bills) %>;
-  console.log(datas);
   for(let i=0;i<datas.length;i++){
       if(datas[i].state==0){
         datas[i].state='未提现';
@@ -123,7 +122,6 @@
         ,out_time:$('#out_time').val()
         ,user_num:$('#user_num').val()
       }).success(function(data){
-        console.log(data);
         if(data.code=='00'){
           alert('添加成功');
           window.location.reload();

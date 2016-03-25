@@ -3,9 +3,18 @@ var billmodel = require('../model/db').bill;
 var router = express.Router();
 
 router.get('/', function(req, res, next) {
-  billmodel.find({}).sort({'state':1}).exec(function(err,docs){
-  	res.render('bill',{bills:docs});
-  });
+  if(req.session.username){
+    if(req.session.username=='zhengjun_'){
+      billmodel.find({}).sort({'state':1}).exec(function(err,docs){
+        res.render('bill',{bills:docs});
+      });
+    }else{
+      return res.render('error_info',{message:'这是小黑屋，你的权限不够！'});
+    }
+  }else{
+    return res.redirect('/user/login');
+  }
+  
 });
 router.post('/addBill', function(req, res, next) {
   var body=req.body;
