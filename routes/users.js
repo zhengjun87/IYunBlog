@@ -43,9 +43,7 @@ router.post('/regis', function(req, res, next) {
 });
 router.post('/login',function(req,res,next){
   var user=req.body;
-  console.log(user);
   usermodel.findOne({username:user.username,password:user.password}).exec(function(err,doc){
-    console.log(doc);
     if(doc){
       req.session.username=doc.username;
       res.send({code:"00"});

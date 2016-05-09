@@ -9,7 +9,15 @@ var async = require('async');
 router.get('/', function(req, res, next) {
   res.render('loading');
 });
-router.get('/blog', function(req, res, next) {
+router.get('/blog',function(req,res,next){
+  if(!req.query.page||!req.query.type){
+    return res.redirect('/blog?type=all&page=1');
+  }
+  res.render('index',{
+    title:'艾云博客-首页'
+  });
+})
+router.get('/blogList', function(req, res, next) {
   var page=req.query.page;
   var type=req.query.type;
   if(!page||!type){
@@ -39,7 +47,7 @@ router.get('/blog', function(req, res, next) {
       })
     }
   ],function(err,result){ 
-    res.render('index',{
+    res.send({
       allPageNum:result[0],
       articles:result[1],
       currentPage:page,
@@ -78,6 +86,7 @@ router.post('/addarticle', function(req, res, next) {
   })
 	
 });
+
 router.post('/blog/:id/comment',function(req,res,next){
   var option={
     articleId:req.params.id,
@@ -119,11 +128,14 @@ router.post('/blog/:id/comment',function(req,res,next){
   })
   
 })
-router.get('/blog/:id',function(req,res,next){
-	var articleId=req.params.id;
+
+router.get('/blogInfo',function(req,res,next){
+  res.render('article_info',{"title":"详情"});
+})
+router.get('/blogData',function(req,res,next){
+  var articleId=req.query.id;
   articlemodel.findOne({_id:articleId}).populate('user').populate('comment.user').exec(function(err,articleinfo){
-    res.render('article_info',{"title":"详情","articleInfo":articleinfo});
+    res.send({"articleInfo":articleinfo});
   })
 })
-
 module.exports = router;
