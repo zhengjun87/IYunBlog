@@ -46,7 +46,7 @@ $("#sub").click(function(){
 	  url: 'addarticle',
 	  type: 'POST',
 	  dataType: 'json',
-	  data: {title: $("#title").val(), :txt,html:html,type:$("#type").val()}
+	  data: {title: $("#title").val(), content:txt,html:html,type:$("#type").val()}
 	})
 	.then(function(data){
 		switch(data.code){
