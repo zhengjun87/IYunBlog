@@ -87,9 +87,9 @@ router.post('/addarticle', function(req, res, next) {
 	
 });
 
-router.post('/blog/:id/comment',function(req,res,next){
+router.post('/blog/comment',function(req,res,next){
   var option={
-    articleId:req.params.id,
+    articleId:req.query.id,
     username:req.session.username,
     content:req.body.content,
     created_time:new Date()

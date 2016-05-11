@@ -40,14 +40,16 @@ var app =  angular.module('myApp',[])
 	  var urlData=hrefSplit(window.location.href);
 	  $http.get('/blogData?id='+urlData.id+'')
 	  .success(function(data){
+	  	console.log(data);
 	  	$scope.data=data.articleInfo;
+	  	$scope.data.created_time=moment($scope.data.created_time).format("YYYY-MM-DD HH:mm");
 	    $scope.html=$sce.trustAsHtml(data.articleInfo.html);
 	    $scope.addComment=function(){
 	      console.log(ue.getContentTxt());
 	      if(ue.hasContents()){
 	        if(islogin){
 	          jQuery.ajax({
-	            url: ''+location.pathname+'/comment',
+	            url: 'blog/comment?id='+urlData.id+'',
 	            type: 'POST',
 	            dataType: 'json',
 	            data: {content: ue.getContent()},
@@ -70,13 +72,13 @@ var app =  angular.module('myApp',[])
 	      }
 	    };
 	    $scope.comments=(function(){
-	      var datas=article.comment;
+	      var datas=$scope.data.comment;
 	      for(var i=0;i<datas.length;i++){
 	        datas[i].content=$sce.trustAsHtml(datas[i].content);
 	        datas[i].created_time=moment(datas[i].created_time).format("YYYY-MM-DD HH:mm");
 	      }
 	      return datas
-	    });
+	    }());
 	  })
   })
 
