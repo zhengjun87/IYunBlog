@@ -45,7 +45,6 @@ var app =  angular.module('myApp',[])
 	  	$scope.data.created_time=moment($scope.data.created_time).format("YYYY-MM-DD HH:mm");
 	    $scope.html=$sce.trustAsHtml(data.articleInfo.html);
 	    $scope.addComment=function(){
-	      console.log(ue.getContentTxt());
 	      if(ue.hasContents()){
 	        if(islogin){
 	          jQuery.ajax({
