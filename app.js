@@ -13,8 +13,6 @@ var admin = require('./routes/admin');
 var m = require('./routes/m');
 var bill = require('./routes/bill');
 
-
-
 var app = express();
 
 // view engine setup
