@@ -138,4 +138,25 @@ router.get('/blogData',function(req,res,next){
     res.send({"articleInfo":articleinfo});
   })
 })
+//获取京东服务器时间
+router.get('/getJdTime', function(req, res, next) {
+  var month = {
+    'Aug': 8,
+    'Sep': 9,
+    'Oct': 10
+  }
+  request('https://in.m.jd.com/help/app/private_policy.html', function(error, response, body) {
+    if (!error && response.statusCode == 200) {
+      var result = response.headers.date;
+      var serverTime = result;
+      var timeArr = serverTime.split(',')[1].split(' ');
+      //console.log(result.toLocaleString());
+      //var serverNum = new Date(Number(timeArr[3]), Number(month[timeArr[2]])-1, Number(timeArr[1]), Number(timeArr[4].split(':')[0])+8, Number(timeArr[4].split(':')[1]), Number(timeArr[4].split(':')[2])).toLocaleString();
+      //console.log(new Date().getTime());
+      res.send({
+        time: serverTime
+      });
+    }
+  })
+});
 module.exports = router;
