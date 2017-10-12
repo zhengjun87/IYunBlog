@@ -14,7 +14,8 @@
     "express-session": "^1.13.0",
     "morgan": "~1.6.1",
     "serve-favicon": "~2.3.0",
-    "weui": "^0.4.0"
+    "weui": "^0.4.0",
+    "pm2": "~2.7.1"
   },
   "devDependencies": {
     "async": "^1.5.2",
