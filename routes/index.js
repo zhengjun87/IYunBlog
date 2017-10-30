@@ -180,4 +180,14 @@ router.get('/getSnTime', function(req, res, next) {
     }
   })
 });
+router.get('/getQqTime', function(req, res, next) {
+  request('http://cgi.im.qq.com/cgi-bin/cgi_svrtime', function(error, response, body) {
+    if (!error && response.statusCode == 200) {
+      var result = response.body.replace('\n','');
+      res.send({
+        time: result
+      });
+    }
+  })
+});
 module.exports = router;
