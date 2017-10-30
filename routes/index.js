@@ -160,4 +160,24 @@ router.get('/getJdTime', function(req, res, next) {
     }
   })
 });
+router.get('/getTbTime', function(req, res, next) {
+  request('http://api.m.taobao.com/rest/api3.do?api=mtop.common.getTimestamp&clk1=70a27c60d5e00928da8e28dd80bcfb94&upsid=70a27c60d5e00928da8e28dd80bcfb94', function(error, response, body) {
+    if (!error && response.statusCode == 200) {
+      var result = JSON.parse(response.body).data.t;
+      res.send({
+        time: result
+      });
+    }
+  })
+});
+router.get('/getSnTime', function(req, res, next) {
+  request('http://quan.suning.com/getSysTime.do', function(error, response, body) {
+    if (!error && response.statusCode == 200) {
+      var result = JSON.parse(response.body);
+      res.send({
+        time: result
+      });
+    }
+  })
+});
 module.exports = router;
