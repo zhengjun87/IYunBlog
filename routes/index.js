@@ -190,7 +190,8 @@ router.get('/getQqTime', function(req, res, next) {
     }
   })
 });
-router.get('/getGrowthList', function(req, res, next) {
+router.post('/getGrowthList', function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", req.headers.Origin);
   request('https://testm-yqzb.xuehedata.com/activity/groupPointlist.htm', function(error, response, body) {
     if (!error && response.statusCode == 200) {
       var result = response.body.replace('\n','');
