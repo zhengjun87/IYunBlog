@@ -190,15 +190,23 @@ router.get('/getQqTime', function(req, res, next) {
     }
   })
 });
-router.post('/getGrowthList', function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", req.headers.Origin);
-  request('https://testm-yqzb.xuehedata.com/activity/groupPointlist.htm', function(error, response, body) {
-    if (!error && response.statusCode == 200) {
-      var result = response.body.replace('\n','');
-      res.send({
-        time: result
-      });
-    }
-  })
+router.get('/getGrowthList', function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", req.headers.origin);
+  console.log(req.query);
+  var _req = req.query;
+  request({
+      url: 'https://testm-yqzb.xuehedata.com/activity/groupPointlist.htm?type='+_req.type+'&userId='+_req.userId,
+      method: "POST",
+      json: true,
+      headers: {
+        "Content-Type":"application"
+      }
+      //body: JSON.stringify(reqBody)
+    },function(error, response, body) {
+        if (!error && response.statusCode == 200) {
+          var result = response.body;
+          res.send(_req.jsonpCallback+'('+result+')');
+        }
+    }); 
 });
 module.exports = router;
