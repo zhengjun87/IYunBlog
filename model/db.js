@@ -39,7 +39,8 @@ var couponSchema = new Schema({
     coupon_name:{type:String},
     coupon_time:{type:String},
     coupon_url:{type:String},
-    coupon_remark:{type:String}
+    coupon_remark:{type:String},
+    user_flag:{type:String}
 })
 var userModel=db.model('users', userSchema);
 var articleModel=db.model('articles', articleSchema);

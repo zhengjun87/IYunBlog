@@ -6,20 +6,20 @@ router.get('/', function(req, res, next) {
 });
 router.post('/getCoupon', function(req, res, next) {
   var body=req.body;
-  couponmodel.find({},function(err,docs){
+  couponmodel.find({user_flag:body.user_flag},function(err,docs){
     if(!err){
       res.send({code:'00',couponList:docs});
     }
   })
 });
 router.post('/addCoupon', function(req, res, next) {
-  //res.send({code:JSON.stringify(req.body)});
   var body=req.body;
   couponmodel.create({
   	coupon_name:body.coupon_name,
   	coupon_time:body.coupon_time,
   	coupon_url:body.coupon_url,
   	coupon_remark:body.coupon_remark,
+    user_flag:body.user_flag
   },function(err,doc){
   	if(err){
       console.log(err);
