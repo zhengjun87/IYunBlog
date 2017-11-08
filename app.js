@@ -12,6 +12,7 @@ var users = require('./routes/users');
 var admin = require('./routes/admin');
 var m = require('./routes/m');
 var bill = require('./routes/bill');
+var coupon = require('./routes/coupon');
 
 var app = express();
 
@@ -67,6 +68,7 @@ app.use('/user', users);
 app.use('/admin', admin);
 app.use('/m', m);
 app.use('/bill', bill);
+app.use('/coupon', coupon);
 
 
 // 404处理

@@ -35,9 +35,19 @@ var billSchema=new Schema({
     user_num:{type:String},
     state:{type:Number,default:0}
 })
+var couponSchema = new Schema({
+    coupon_name:{type:String},
+    coupon_time:{type:String},
+    coupon_url:{type:String},
+    coupon_remark:{type:String}
+})
 var userModel=db.model('users', userSchema);
 var articleModel=db.model('articles', articleSchema);
 var billModel=db.model('bills', billSchema);
-exports.user = userModel;
-exports.article = articleModel;
-exports.bill = billModel;
+var couponModel=db.model('coupon', couponSchema);
+module.exports = {
+   user: userModel,
+   article:articleModel,
+   bill:billModel,
+   coupon:couponModel
+}
