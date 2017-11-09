@@ -6,7 +6,7 @@ router.get('/', function(req, res, next) {
 });
 router.post('/getCoupon', function(req, res, next) {
   var body=req.body;
-  couponmodel.find({user_flag:body.user_flag},function(err,docs){
+  couponmodel.find({user_flag:body.user_flag}).sort({'_id':-1}).exec(function(err,docs){
     if(!err){
       res.send({code:'00',couponList:docs});
     }
