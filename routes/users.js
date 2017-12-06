@@ -5,7 +5,7 @@ var router = express.Router();
 
 /* GET users listing. */
 router.get('/login', function(req, res, next) {
-  res.render('login',{title:'登陆'});
+  res.render('login',{title:'艾云博客-登陆'});
 });
 router.get('/outlogin', function(req, res, next) {
   res.redirect('/blog');
@@ -20,7 +20,7 @@ router.post('/isLogin',function(req, res, next){
   }
 })
 router.get('/regis', function(req, res, next) {
-  res.render('register',{title:'注册'});
+  res.render('register',{title:'艾云博客-注册'});
 });
 router.post('/regis', function(req, res, next) {
   var user = req.body;

@@ -8,7 +8,9 @@ var async = require('async');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('loading');
+  res.render('loading',{
+    title:'艾云博客-欢迎页'
+  });
 });
 router.get('/blog',function(req,res,next){
   if(!req.query.page||!req.query.type){
@@ -59,7 +61,9 @@ router.get('/blogList', function(req, res, next) {
 });
 router.get('/addarticle',function(req, res, next) {
   if(req.session.username){
-    res.render('add_article');
+    res.render('add_article',{
+      title:'艾云博客-发表'
+    });
   }else{
     res.redirect('/user/login');
   }
