@@ -116,7 +116,6 @@ router.post('/blog/comment',function(req,res,next){
   async.waterfall([
     function(callback){
       usermodel.findOne({username:option.username}).exec(function(err,user){
-        console.log(user);
         callback(null,user);
       })
     },
