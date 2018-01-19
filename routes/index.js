@@ -23,6 +23,7 @@ router.get('/blog',function(req,res,next){
 router.get('/blogList', function(req, res, next) {
   var page=req.query.page;
   var type=req.query.type;
+  var pageSize = parseInt(req.query.pageSize) || 10;
   if(!page||!type){
     return res.redirect('/blog?type=all&page=1');
   }
@@ -45,19 +46,27 @@ router.get('/blogList', function(req, res, next) {
       })
     },
     function(callback){
-      articlemodel.find(queryOption).sort({'created_time':-1}).skip(((page-1)*10)).limit(10).exec(function(err, articles){
+      articlemodel.find(queryOption,{content:0,html:0}).sort({'created_time':-1}).skip(((page-1)*pageSize)).limit(pageSize).populate('user',{username: 1,_id:0}).exec(function(err, articles){
         callback(null,articles)
       })
     }
-  ],function(err,result){ 
+  ],function(err,result){
+  	
+  	var pageCountNum=0
+  	if(result[0]%pageSize===0){
+  		pageCountNum = result[0]/pageSize
+  	}else{
+  		pageCountNum = parseInt(result[0]/pageSize)+1
+  	}
     res.send({
       allPageNum:result[0],
       articles:result[1],
+      pageCount:pageCountNum,
       currentPage:page,
       type:type
     })  
   })
-  
+
 });
 router.get('/addarticle',function(req, res, next) {
   if(req.session.username){
@@ -93,13 +102,17 @@ router.post('/addarticle', function(req, res, next) {
 });
 
 router.post('/blog/comment',function(req,res,next){
+  console.log(req.session);
+  if(!req.session.username){
+  	res.send({code:'03',msg:'未登录'});
+  	return ;
+  }
   var option={
     articleId:req.query.id,
     username:req.session.username,
     content:req.body.content,
     created_time:new Date()
   }
-  console.log(option);
   async.waterfall([
     function(callback){
       usermodel.findOne({username:option.username}).exec(function(err,user){
@@ -126,9 +139,9 @@ router.post('/blog/comment',function(req,res,next){
   ],function(err,result){
     if(!err){
       console.log(err);
-      res.send({code:'00'});
+      res.send({code:'00',msg:'发表成功'});
     }else{
-      res.send({code:'01'});
+      res.send({code:'01',msg:'位置错误'});
     }
   })
   
@@ -139,7 +152,7 @@ router.get('/blogInfo',function(req,res,next){
 })
 router.get('/blogData',function(req,res,next){
   var articleId=req.query.id;
-  articlemodel.findOne({_id:articleId}).populate('user').populate('comment.user').exec(function(err,articleinfo){
+  articlemodel.findOne({_id:articleId}).populate('user',{username: 1,_id:0}).populate('comment.user',{username: 1,_id:0}).exec(function(err,articleinfo){
     res.send({"articleInfo":articleinfo});
   })
 })
