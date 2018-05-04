@@ -41,7 +41,7 @@ router.post('/removeCoupon',function(req,res,next){
 })
 router.post('/editCoupon',function(req,res,next){
   var body=req.body;
-  couponmodel.updata({_id:body._id},{
+  couponmodel.update({_id:body._id},{
     coupon_name:body.coupon_name,
     coupon_time:body.coupon_time,
     coupon_url:body.coupon_url,
