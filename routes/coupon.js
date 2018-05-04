@@ -39,4 +39,20 @@ router.post('/removeCoupon',function(req,res,next){
     }
 	})
 })
+router.post('/editCoupon',function(req,res,next){
+  var body=req.body;
+  couponmodel.updata({_id:body.id},{
+    coupon_name:body.coupon_name,
+    coupon_time:body.coupon_time,
+    coupon_url:body.coupon_url,
+    coupon_remark:body.coupon_remark,
+    user_flag:body.user_flag
+  },function(err,doc){
+    if(!err){
+      res.send({code:'00'});
+    }else{
+      res.send({code:'01'});
+    }
+  })
+})
 module.exports=router;
