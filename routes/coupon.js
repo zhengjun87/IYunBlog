@@ -2,11 +2,11 @@ var express = require('express');
 var couponmodel = require('../model/db').coupon;
 var router = express.Router();
 router.get('/', function(req, res, next) {
-  res.send('地址更改（将www修改为quan）请访问：http://quan.woiyun.com/coupon/#/aa8888');
+  res.send('地址更改（将www修改为quan）请访问：http://quan.woiyun.com/coupon/#/receive/aa8888');
 });
 router.post('/getCoupon', function(req, res, next) {
   var body=req.body;
-  couponmodel.find({user_flag:body.user_flag}).sort({'_id':-1}).exec(function(err,docs){
+  couponmodel.find({user_flag:{'$in':[body.user_flag,'public']}}).sort({'_id':-1}).exec(function(err,docs){
     if(!err){
       res.send({code:'00',couponList:docs});
     }
@@ -47,6 +47,18 @@ router.post('/editCoupon',function(req,res,next){
     coupon_url:body.coupon_url,
     coupon_remark:body.coupon_remark,
     user_flag:body.user_flag
+  },function(err,doc){
+    if(!err){
+      res.send({code:'00'});
+    }else{
+      res.send({code:'01'});
+    }
+  })
+})
+router.post('/setPublicCoupon',function(req,res,next){
+  var body=req.body;
+  couponmodel.update({_id:body.id},{
+    user_flag:'public'
   },function(err,doc){
     if(!err){
       res.send({code:'00'});
