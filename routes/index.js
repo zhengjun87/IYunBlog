@@ -368,7 +368,7 @@ router.get('/bus850-down', function(req, res, next) {
   let secondArriveTime = 0
   let beforeStationTime = []
   let sid = ''
-  let startNum = 1
+  let startNum = 2
   let resResult = ''
   main()
 
