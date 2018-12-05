@@ -265,197 +265,108 @@ router.get('/getGrowthList', function(req, res, next) {
 })
 
 /**
- * 上下班公交查询
+ * 上下班公交查询 0 是上班 1是下班
  */
-router.get('/bus850-up', function(req, res, next) {
-  const request = require('request')
+router.get('/bus-up/:line/:startNum', function(req, res, next) {
+  console.log()
+  busMain(req.params.line + '路', 0, parseInt(req.params.startNum)).then(data => {
+    res.render('bus/bus850', { title: '上班', contnet: data })
+  })
+})
+router.get('/bus-down/:line/:startNum', function(req, res, next) {
+  busMain(req.params.line + '路', 1, parseInt(req.params.startNum)).then(data => {
+    res.render('bus/bus850', { title: '下班', contnet: data })
+  })
+})
+function getSid(roadLine) {
+  let options = {
+    url: 'https://shanghaicity.openservice.kankanews.com/public/bus/get',
+    headers: {
+      'User-Agent':
+        'Mozilla/5.0 (Linux; U; Android 2.3.6; zh-cn; GT-S5660 Build/GINGERBREAD) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1 wxwork/2.2.0 MicroMessenger/4.5.255',
+      method: 'GET',
+      accept: '*/*',
+      'content-type': 'application/x-www-form-urlencoded',
+      origin: 'https://shanghaicity.openservice.kankanews.com'
+    },
+    form: 'idnum=' + encodeURIComponent(roadLine)
+  }
+  return new Promise((resolve, reject) => {
+    request.post(options, function(error, response, body) {
+      resolve(body)
+    })
+  })
+}
+function getStationInfo(sid, type, index) {
+  let options = {
+    url: 'https://shanghaicity.openservice.kankanews.com/public/bus/Getstop',
+    headers: {
+      'User-Agent':
+        'Mozilla/5.0 (Linux; U; Android 2.3.6; zh-cn; GT-S5660 Build/GINGERBREAD) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1 wxwork/2.2.0 MicroMessenger/4.5.255',
+      method: 'GET',
+      // 'path': '/activemcenter/mfreecoupon/getcoupon?key=6799eb3ac6024ba0b7df30272414032f&roleId=15016605&to=https%3A%2F%2Fpro.m.jd.com%2Fmall%2Factive%2Fo91NRGPA9s5JvRFFkWfkoRQV9aU%2Findex.html&verifycode=&verifysession=&_=1540433934140&sceneval=2&g_login_type=1&callback=jsonpCBKD&g_ty=ls',
+      accept: '*/*',
+      'content-type': 'application/x-www-form-urlencoded',
+      origin: 'https://shanghaicity.openservice.kankanews.com',
+      cookie: ''
+      // 'X-Requested-With': 'XMLHttpRequest'
+    },
+    form: 'stoptype=' + type + '&stopid=' + index + '.&sid=' + sid + ''
+  }
+  return new Promise((resolve, reject) => {
+    request.post(options, function(error, response, body) {
+      body = JSON.parse(body)
+      if (!(body instanceof Array)) {
+        body = [
+          {
+            time: 99999
+          }
+        ]
+      }
+      resolve(JSON.stringify(body))
+    })
+  })
+}
+/**
+ *
+ * @param {String} roadLine
+ * @param {Number} type 0和1代表两个方向
+ * @param {Number} goStationNum
+ * @return {String} 结果
+ */
+async function busMain(roadLine, type, goStationNum) {
+  let sid = ''
   let firstArriveTime = 0
   let secondArriveTime = 0
-  let beforeStationTime = []
-  let sid = ''
-  let startNum = 11
-  let resResult = ''
-  main()
-
-  async function main() {
-    await getSid().then(res => {
+  let beforeStationTime = [] // 当前站点前面每一站到达的时间
+  let isBreak = false // 找到大于前面一站的时间说明是第二趟车了
+  await getSid(roadLine).then(res => {
+    sid = JSON.parse(res).sid
+  })
+  for (let i = goStationNum; i >= 1; i--) {
+    if (isBreak) break
+    await getStationInfo(sid, type, i).then(res => {
       res = JSON.parse(res)
-      sid = res.sid
-      console.log('sid为' + sid)
-    })
-    await getStationInfo(startNum).then(res => {
-      res = JSON.parse(res)
-      firstArriveTime = JSON.parse(res[0].time)
-    })
-    let isBreak = false
-    for (let i = startNum - 1; i >= 1; i--) {
-      if (isBreak) break
-      await getStationInfo(i).then(res => {
-        res = JSON.parse(res)
-        let temp = parseInt(res[0].time)
-        console.log(temp)
-        if (beforeStationTime.length === 0) return beforeStationTime.push(temp)
-        if (temp < beforeStationTime[beforeStationTime.length - 1]) {
-          beforeStationTime.push(temp)
-        } else {
-          secondArriveTime = temp
-          isBreak = true
-        }
-      })
-    }
-    let beforeSum = 0
-    beforeStationTime.forEach(item => {
-      beforeSum += item
-    })
-    let firstDesc = firstArriveTime === 99999 ? '等待发车' : `${(firstArriveTime/60).toFixed(1)}分钟到`
-    let secondDesc = secondArriveTime === 99999 || firstArriveTime === 99999 ? '等待发车' : ((firstArriveTime+secondArriveTime)/60).toFixed(1) + '分钟到达'
-    resResult = `第一班车：${firstDesc}，第二班车：${secondDesc}`
-    res.render('bus/bus850', { title: '上班', contnet: resResult })
-  }
-  function getSid() {
-    let options = {
-      url: 'https://shanghaicity.openservice.kankanews.com/public/bus/get',
-      headers: {
-        'User-Agent':
-          'Mozilla/5.0 (Linux; U; Android 2.3.6; zh-cn; GT-S5660 Build/GINGERBREAD) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1 wxwork/2.2.0 MicroMessenger/4.5.255',
-        method: 'GET',
-        accept: '*/*',
-        'content-type': 'application/x-www-form-urlencoded',
-        origin: 'https://shanghaicity.openservice.kankanews.com'
-      },
-      form: 'idnum=850%E8%B7%AF'
-    }
-    return new Promise((resolve, reject) => {
-      request.post(options, function(error, response, body) {
-        resolve(body)
-      })
+      let temp = parseInt(res[0].time)
+      if (i === goStationNum) return (firstArriveTime = temp)
+      if (beforeStationTime.length === 0) return beforeStationTime.push(temp)
+      if (temp < beforeStationTime[beforeStationTime.length - 1]) {
+        beforeStationTime.push(temp)
+      } else {
+        secondArriveTime = temp
+        isBreak = true
+      }
     })
   }
-  function getStationInfo(index) {
-    let options = {
-      url: 'https://shanghaicity.openservice.kankanews.com/public/bus/Getstop',
-      headers: {
-        'User-Agent':
-          'Mozilla/5.0 (Linux; U; Android 2.3.6; zh-cn; GT-S5660 Build/GINGERBREAD) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1 wxwork/2.2.0 MicroMessenger/4.5.255',
-        method: 'GET',
-        // 'path': '/activemcenter/mfreecoupon/getcoupon?key=6799eb3ac6024ba0b7df30272414032f&roleId=15016605&to=https%3A%2F%2Fpro.m.jd.com%2Fmall%2Factive%2Fo91NRGPA9s5JvRFFkWfkoRQV9aU%2Findex.html&verifycode=&verifysession=&_=1540433934140&sceneval=2&g_login_type=1&callback=jsonpCBKD&g_ty=ls',
-        accept: '*/*',
-        'content-type': 'application/x-www-form-urlencoded',
-        origin: 'https://shanghaicity.openservice.kankanews.com',
-        cookie: ''
-        // 'X-Requested-With': 'XMLHttpRequest'
-      },
-      form: 'stoptype=0&stopid=' + index + '.&sid=' + sid + ''
-    }
-    return new Promise((resolve, reject) => {
-      request.post(options, function(error, response, body) {
-        body = JSON.parse(body)
-        if (!(body instanceof Array)) {
-          body = [
-            {
-              time: 99999
-            }
-          ]
-        }
-        resolve(JSON.stringify(body))
-      })
-    })
-  }
-})
-router.get('/bus850-down', function(req, res, next) {
-  const request = require('request')
-  let firstArriveTime = 0
-  let secondArriveTime = 0
-  let beforeStationTime = []
-  let sid = ''
-  let startNum = 2
-  let resResult = ''
-  main()
-
-  async function main() {
-    await getSid().then(res => {
-      res = JSON.parse(res)
-      sid = res.sid
-      console.log('sid为' + sid)
-    })
-    await getStationInfo(startNum).then(res => {
-      res = JSON.parse(res)
-      firstArriveTime = JSON.parse(res[0].time)
-    })
-    let isBreak = false
-    for (let i = startNum - 1; i >= 1; i--) {
-      if (isBreak) break
-      await getStationInfo(i).then(res => {
-        res = JSON.parse(res)
-        let temp = parseInt(res[0].time)
-        console.log(temp)
-        if (beforeStationTime.length === 0) return beforeStationTime.push(temp)
-        if (temp < beforeStationTime[beforeStationTime.length - 1]) {
-          beforeStationTime.push(temp)
-        } else {
-          secondArriveTime = temp
-          isBreak = true
-        }
-      })
-    }
-    let beforeSum = 0
-    beforeStationTime.forEach(item => {
-      beforeSum += item
-    })
-    let firstDesc = firstArriveTime === 99999 ? '等待发车' : `${(firstArriveTime/60).toFixed(1)}分钟到`
-    let secondDesc = secondArriveTime === 99999 || firstArriveTime === 99999 ? '等待发车' : ((firstArriveTime+secondArriveTime)/60).toFixed(1) + '分钟到达'
-    resResult = `第一班车：${firstDesc}，第二班车：${secondDesc}`
-    res.render('bus/bus850', { title: '下班', contnet: resResult })
-  }
-  function getSid() {
-    let options = {
-      url: 'https://shanghaicity.openservice.kankanews.com/public/bus/get',
-      headers: {
-        'User-Agent':
-          'Mozilla/5.0 (Linux; U; Android 2.3.6; zh-cn; GT-S5660 Build/GINGERBREAD) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1 wxwork/2.2.0 MicroMessenger/4.5.255',
-        method: 'GET',
-        accept: '*/*',
-        'content-type': 'application/x-www-form-urlencoded',
-        origin: 'https://shanghaicity.openservice.kankanews.com'
-      },
-      form: 'idnum=850%E8%B7%AF'
-    }
-    return new Promise((resolve, reject) => {
-      request.post(options, function(error, response, body) {
-        resolve(body)
-      })
-    })
-  }
-  function getStationInfo(index) {
-    let options = {
-      url: 'https://shanghaicity.openservice.kankanews.com/public/bus/Getstop',
-      headers: {
-        'User-Agent':
-          'Mozilla/5.0 (Linux; U; Android 2.3.6; zh-cn; GT-S5660 Build/GINGERBREAD) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1 wxwork/2.2.0 MicroMessenger/4.5.255',
-        method: 'GET',
-        // 'path': '/activemcenter/mfreecoupon/getcoupon?key=6799eb3ac6024ba0b7df30272414032f&roleId=15016605&to=https%3A%2F%2Fpro.m.jd.com%2Fmall%2Factive%2Fo91NRGPA9s5JvRFFkWfkoRQV9aU%2Findex.html&verifycode=&verifysession=&_=1540433934140&sceneval=2&g_login_type=1&callback=jsonpCBKD&g_ty=ls',
-        accept: '*/*',
-        'content-type': 'application/x-www-form-urlencoded',
-        origin: 'https://shanghaicity.openservice.kankanews.com',
-        cookie: ''
-        // 'X-Requested-With': 'XMLHttpRequest'
-      },
-      form: 'stoptype=1&stopid=' + index + '.&sid=' + sid + ''
-    }
-    return new Promise((resolve, reject) => {
-      request.post(options, function(error, response, body) {
-        body = JSON.parse(body)
-        if (!(body instanceof Array)) {
-          body = [
-            {
-              time: 99999
-            }
-          ]
-        }
-        resolve(JSON.stringify(body))
-      })
-    })
-  }
-  
-})
+  let firstDesc =
+    firstArriveTime === 99999
+      ? '等待发车'
+      : `${(firstArriveTime / 60).toFixed(1)}分钟到`
+  let secondDesc =
+    secondArriveTime === 99999 || firstArriveTime === 99999
+      ? '等待发车'
+      : ((firstArriveTime + secondArriveTime) / 60).toFixed(1) + '分钟到达'
+  resResult = `第一班车：${firstDesc}，第二班车：${secondDesc}`
+  return roadLine + '：' + resResult
+}
 module.exports = router
