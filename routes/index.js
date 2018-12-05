@@ -186,28 +186,11 @@ router.get('/getJdTime', function(req, res, next) {
     if (!error && response.statusCode == 200) {
       var result = response.headers.date
       var serverTime = result
-      var timeArr = serverTime.split(',')[1].split(' ')
-      //console.log(result.toLocaleString());
-      //var serverNum = new Date(Number(timeArr[3]), Number(month[timeArr[2]])-1, Number(timeArr[1]), Number(timeArr[4].split(':')[0])+8, Number(timeArr[4].split(':')[1]), Number(timeArr[4].split(':')[2])).toLocaleString();
-      //console.log(new Date().getTime());
       res.send({
         time: serverTime
       })
     }
   })
-})
-router.get('/getTbTime', function(req, res, next) {
-  request(
-    'http://api.m.taobao.com/rest/api3.do?api=mtop.common.getTimestamp&clk1=70a27c60d5e00928da8e28dd80bcfb94&upsid=70a27c60d5e00928da8e28dd80bcfb94',
-    function(error, response, body) {
-      if (!error && response.statusCode == 200) {
-        var result = JSON.parse(response.body).data.t
-        res.send({
-          time: result
-        })
-      }
-    }
-  )
 })
 router.get('/getSnTime', function(req, res, next) {
   request('http://quan.suning.com/getSysTime.do', function(
@@ -223,60 +206,23 @@ router.get('/getSnTime', function(req, res, next) {
     }
   })
 })
-router.get('/getQqTime', function(req, res, next) {
-  request('http://cgi.im.qq.com/cgi-bin/cgi_svrtime', function(
-    error,
-    response,
-    body
-  ) {
-    if (!error && response.statusCode == 200) {
-      var result = response.body.replace('\n', '')
-      res.send({
-        time: result
-      })
-    }
-  })
-})
-router.get('/getGrowthList', function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', req.headers.origin)
-  console.log(req.query)
-  var _req = req.query
-  request(
-    {
-      url:
-        'https://testm-yqzb.xuehedata.com/activity/groupPointlist.htm?type=' +
-        _req.type +
-        '&userId=' +
-        _req.userId,
-      method: 'POST',
-      json: true,
-      headers: {
-        'Content-Type': 'application'
-      }
-      //body: JSON.stringify(reqBody)
-    },
-    function(error, response, body) {
-      if (!error && response.statusCode == 200) {
-        var result = response.body
-        res.send(_req.jsonpCallback + '(' + result + ')')
-      }
-    }
-  )
-})
-
 /**
  * 上下班公交查询 0 是上班 1是下班
  */
 router.get('/bus-up/:line/:startNum', function(req, res, next) {
   console.log()
-  busMain(req.params.line + '路', 0, parseInt(req.params.startNum)).then(data => {
-    res.render('bus/bus850', { title: '上班', contnet: data })
-  })
+  busMain(req.params.line + '路', 0, parseInt(req.params.startNum)).then(
+    data => {
+      res.render('bus/bus850', { title: '上班', contnet: data })
+    }
+  )
 })
 router.get('/bus-down/:line/:startNum', function(req, res, next) {
-  busMain(req.params.line + '路', 1, parseInt(req.params.startNum)).then(data => {
-    res.render('bus/bus850', { title: '下班', contnet: data })
-  })
+  busMain(req.params.line + '路', 1, parseInt(req.params.startNum)).then(
+    data => {
+      res.render('bus/bus850', { title: '下班', contnet: data })
+    }
+  )
 })
 function getSid(roadLine) {
   let options = {
